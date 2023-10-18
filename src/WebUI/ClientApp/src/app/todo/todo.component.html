@@ -1,8 +1,18 @@
-<h1>Todo</h1>
+<div class="row">
+  <div class="col-sm-4">
+    <h1>Todo</h1>
 
-<p>This is a complex todo list component.</p>
+    <p>This is a complex todo list component.</p>
 
-<p *ngIf="!lists"><em>Loading...</em></p>
+    <p *ngIf="!lists"><em>Loading...</em></p>
+  </div>
+  <div class="col-sm-4">
+    <div class="form-group">
+      <label for="tagTitle">Filter Item by Tag</label>
+      <input type="text" (keyup)="applyFilter($event)" class="form-control" id="tag" placeholder="Tag..." />
+    </div>
+  </div>
+</div>
 
 <div *ngIf="lists">
 
@@ -57,6 +67,11 @@
                       class="btn btn-default btn-xs" role="button">
                 <i class="bi bi-three-dots-vertical"></i>
               </button>
+            </div>
+          </div>
+          <div class="d-flex flex-wrap">
+            <div class="d-flex flex-wrap" *ngFor="let tag of item.tags; index as i">
+              <button class="btn" (click)="showEditTagModal(editTagsModalTemplate,tag,item)" [ngStyle]="{'backgroundColor':tag.colour,'font-size':'15px','margin':'5px'}">{{tag.title}}</button>
             </div>
           </div>
         </li>
@@ -155,7 +170,14 @@
           <option value="#999999">Grey</option>
         </datalist>
       </div>
-    </form>
+      <div class="form-group">
+        <button class="btn btn-default float-start" title="New List..."
+                (click)="showNewTagModal(tagsModalTemplate,selectedItem)" style="background-color:antiquewhite;margin-top:10px;">
+          Tags
+          <i class="bi bi-journal-plus"></i>
+        </button>
+      </div>
+</form>
     <div *ngIf="debug">
       <pre>{{ itemDetailsFormGroup.value | json }}</pre>
     </div>
@@ -218,6 +240,69 @@
     <div class="float-end">
       <button class="btn btn-default" (click)="newListCancelled()">Cancel</button>
       <button class="btn btn-primary" (click)="addList()">Create</button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #tagsModalTemplate>
+  <div class="modal-header">
+    <h4 class="modal-tag pull-left">New Tag</h4>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="itemDetailsTagFormGroup" class="form">
+      <label for="tagTitle">Tag</label>
+      <input type="text" class="form-control" id="tag" formControlName="title" placeholder="Tag Description..." />
+      <label for="tagColor">Color</label>
+      <input type="color" list="presets" class="form-control" formControlName="colour" id="inputListColour" placeholder="Color..."
+            />
+      <datalist id="presets">
+        <option value="#FFFFFF">White</option>
+        <option value="#FF5733">Red</option>
+        <option value="#FFC300">Orange</option>
+        <option value="#FFFF66">Yellow</option>
+        <option value="#CCFF99">Green</option>
+        <option value="#6666FF">Blue</option>
+        <option value="#9966CC">Purple</option>
+        <option value="#999999">Grey</option>
+      </datalist>
+    </form>
+   </div>
+  <div class="modal-footer clearfix">
+    <div class="float-end">
+      <button class="btn btn-default" (click)="newTagCancelled()">Cancel</button>
+      <button class="btn btn-primary" (click)="addItemTag()">Add</button>
+    </div>
+  </div>
+</ng-template>
+<ng-template #editTagsModalTemplate>
+  <div class="modal-header">
+    <h4 class="modal-tag pull-left">Edit Tag</h4>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="itemDetailsTagFormGroup" class="form">
+      <label for="tagTitle">Tag</label>
+      <input type="text" class="form-control" id="tag" formControlName="title" placeholder="Tag Description..." />
+      <label for="tagColor">Color</label>
+      <input type="color" list="presets" class="form-control" formControlName="colour" id="inputListColour" placeholder="Color..." />
+      <datalist id="presets">
+        <option value="#FFFFFF">White</option>
+        <option value="#FF5733">Red</option>
+        <option value="#FFC300">Orange</option>
+        <option value="#FFFF66">Yellow</option>
+        <option value="#CCFF99">Green</option>
+        <option value="#6666FF">Blue</option>
+        <option value="#9966CC">Purple</option>
+        <option value="#999999">Grey</option>
+      </datalist>
+    </form>
+  </div>
+  <div class="modal-footer clearfix">
+    <div class="float-start">
+      <button class="btn btn-default text-danger" (click)="deleteTag(itemDetailsTagFormGroup.value, true)">{{deletingTag ? 'Deleting ' + deleteCountDown + ' ...' : 'Delete'}}</button>
+    </div>
+    <div class="float-end">
+      <button class="btn btn-default" (click)="newTagCancelled()">Cancel</button>
+      <button class="btn btn-primary" (click)="addItemTag()">Add</button>
     </div>
   </div>
 </ng-template>
