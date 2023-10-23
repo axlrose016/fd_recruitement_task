@@ -6,6 +6,7 @@
         <AssemblyName>Todo_App.Application</AssemblyName>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <LangVersion>preview</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
@@ -20,6 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="TodoItems\Commands\SoftDeleteTodoItem\" />
       <Folder Include="TodoItemTags\EventHandlers\" />
     </ItemGroup>
 

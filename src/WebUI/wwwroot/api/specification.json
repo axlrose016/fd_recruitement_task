@@ -145,6 +145,14 @@
               "format": "int32"
             },
             "x-position": 1
+          },
+          {
+            "name": "is_soft_delete",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            },
+            "x-position": 2
           }
         ],
         "responses": {
@@ -497,6 +505,14 @@
               "format": "int32"
             },
             "x-position": 1
+          },
+          {
+            "name": "is_soft_delete",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            },
+            "x-position": 2
           }
         ],
         "responses": {
@@ -796,9 +812,6 @@
               "colour": {
                 "$ref": "#/components/schemas/Colour"
               },
-              "isDeleted": {
-                "type": "boolean"
-              },
               "item": {
                 "$ref": "#/components/schemas/TodoItem"
               }
@@ -832,6 +845,18 @@
               "lastModifiedBy": {
                 "type": "string",
                 "nullable": true
+              },
+              "deletedBy": {
+                "type": "string",
+                "nullable": true
+              },
+              "isDeleted": {
+                "type": "boolean",
+                "nullable": true
+              },
+              "deletedDate": {
+                "type": "string",
+                "format": "date-time"
               }
             }
           }

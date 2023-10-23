@@ -19,6 +19,7 @@ export class TodoComponent implements OnInit {
   debug = false;
   deleting = false;
   deletingTag = false;
+  softDeleteCntDown = false;
   deleteCountDown = 0;
   deleteCountDownInterval: any;
   lists: TodoListDto[];
@@ -147,8 +148,8 @@ export class TodoComponent implements OnInit {
     this.deleteListModalRef = this.modalService.show(template);
   }
 
-  deleteListConfirmed(): void {
-    this.listsClient.delete(this.selectedList.id).subscribe(
+  deleteListConfirmed(is_soft_delete): void {
+    this.listsClient.delete(this.selectedList.id,is_soft_delete).subscribe(
       () => {
         this.deleteListModalRef.hide();
         this.lists = this.lists.filter(t => t.id !== this.selectedList.id);
@@ -157,7 +158,6 @@ export class TodoComponent implements OnInit {
       error => console.error(error)
     );
   }
-
   // Items
   showItemDetailsModal(template: TemplateRef<any>, item: TodoItemDto): void {
     this.selectedItem = item;
@@ -262,7 +262,8 @@ export class TodoComponent implements OnInit {
     }
   }
 
-  deleteItem(item: TodoItemDto, countDown?: boolean) {
+  deleteItem(item: TodoItemDto, countDown?: boolean, is_soft_delete?: boolean) {
+    this.softDeleteCntDown = is_soft_delete;
     if (countDown) {
       if (this.deleting) {
         this.stopDeleteCountDown();
@@ -272,7 +273,7 @@ export class TodoComponent implements OnInit {
       this.deleting = true;
       this.deleteCountDownInterval = setInterval(() => {
         if (this.deleting && --this.deleteCountDown <= 0) {
-          this.deleteItem(item, false);
+          this.deleteItem(item, false,is_soft_delete);
         }
       }, 1000);
       return;
@@ -286,7 +287,7 @@ export class TodoComponent implements OnInit {
       const itemIndex = this.selectedList.items.indexOf(this.selectedItem);
       this.selectedList.items.splice(itemIndex, 1);
     } else {
-      this.itemsClient.delete(item.id).subscribe(
+      this.itemsClient.delete(item.id, is_soft_delete).subscribe(
         () =>
         (this.selectedList.items = this.selectedList.items.filter(
           t => t.id !== item.id

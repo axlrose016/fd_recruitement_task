@@ -45,10 +45,16 @@ public class AuditableEntitySaveChangesInterceptor : SaveChangesInterceptor
                 entry.Entity.Created = _dateTime.Now;
             }
 
-            if (entry.State == EntityState.Added || entry.State == EntityState.Modified || entry.HasChangedOwnedEntities())
+            if ((entry.State == EntityState.Added || entry.State == EntityState.Modified || entry.HasChangedOwnedEntities()) && entry.Entity.IsDeleted == false)
             {
                 entry.Entity.LastModifiedBy = _currentUserService.UserId;
                 entry.Entity.LastModified = _dateTime.Now;
+            }
+
+            if (entry.State == EntityState.Modified && entry.Entity.IsDeleted == true)
+            {
+                entry.Entity.DeletedBy = _currentUserService.UserId;
+                entry.Entity.DeletedDate = _dateTime.Now;
             }
         }
     }

@@ -185,7 +185,8 @@
   <div class="modal-footer">
     <div class="clearfix">
       <div class="float-start">
-        <button class="btn btn-default text-danger" (click)="deleteItem(selectedItem, true)">{{deleting ? 'Deleting ' + deleteCountDown + ' ...' : 'Delete'}}</button>
+        <button class="btn btn-danger" (click)="deleteItem(selectedItem, true, false)">{{deleting && !softDeleteCntDown ? 'Deleting ' + deleteCountDown + ' ...' : 'Delete'}}</button>
+        <button class="btn btn" style="background-color:orange;margin-left:5px;" (click)="deleteItem(selectedItem, true, true)">{{deleting && softDeleteCntDown ? 'Deleting ' + deleteCountDown + ' ...' : 'Soft Delete'}}</button>
       </div>
       <div class="float-end">
         <button class="btn btn-default" (click)="itemDetailsModalRef.hide()">Cancel</button>
@@ -203,7 +204,7 @@
     </button>
   </div>
   <div class="modal-body">
-    <p>All items will be permanently deleted. </p>
+    <p>All items will be permanently/soft deleted. </p>
     <div *ngIf="debug">
       <pre>{{ selectedList | json }}</pre>
     </div>
@@ -211,7 +212,8 @@
   <div class="modal-footer clearfix">
     <div class="float-end">
       <button type="button" class="btn btn-default" (click)="deleteListModalRef.hide()">Cancel</button>
-      <button type="button" class="btn btn-danger" (click)="deleteListConfirmed()">Delete</button>
+      <button type="button" class="btn btn-danger" (click)="deleteListConfirmed(false)">Delete</button>
+      <button type="button" class="btn"style="margin-left:5px;background-color:orange;" (click)="deleteListConfirmed(true)">Soft Delete</button>
     </div>
   </div>
 </ng-template>

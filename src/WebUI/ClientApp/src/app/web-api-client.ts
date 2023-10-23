@@ -19,7 +19,7 @@ export interface ITodoItemsClient {
     getTodoItemsWithPagination(listId: number | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginatedListOfTodoItemBriefDto>;
     create(command: CreateTodoItemCommand): Observable<number>;
     update(id: number, command: UpdateTodoItemCommand): Observable<FileResponse>;
-    delete(id: number): Observable<FileResponse>;
+    delete(id: number, is_soft_delete: boolean | undefined): Observable<FileResponse>;
     updateItemDetails(id: number | undefined, command: UpdateTodoItemDetailCommand): Observable<FileResponse>;
 }
 
@@ -202,11 +202,15 @@ export class TodoItemsClient implements ITodoItemsClient {
         return _observableOf(null as any);
     }
 
-    delete(id: number): Observable<FileResponse> {
-        let url_ = this.baseUrl + "/api/TodoItems/{id}";
+    delete(id: number, is_soft_delete: boolean | undefined): Observable<FileResponse> {
+        let url_ = this.baseUrl + "/api/TodoItems/{id}?";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        if (is_soft_delete === null)
+            throw new Error("The parameter 'is_soft_delete' cannot be null.");
+        else if (is_soft_delete !== undefined)
+            url_ += "is_soft_delete=" + encodeURIComponent("" + is_soft_delete) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -591,7 +595,7 @@ export interface ITodoListsClient {
     create(command: CreateTodoListCommand): Observable<number>;
     get2(id: number): Observable<FileResponse>;
     update(id: number, command: UpdateTodoListCommand): Observable<FileResponse>;
-    delete(id: number): Observable<FileResponse>;
+    delete(id: number, is_soft_delete: boolean | undefined): Observable<FileResponse>;
 }
 
 @Injectable({
@@ -810,11 +814,15 @@ export class TodoListsClient implements ITodoListsClient {
         return _observableOf(null as any);
     }
 
-    delete(id: number): Observable<FileResponse> {
-        let url_ = this.baseUrl + "/api/TodoLists/{id}";
+    delete(id: number, is_soft_delete: boolean | undefined): Observable<FileResponse> {
+        let url_ = this.baseUrl + "/api/TodoLists/{id}?";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        if (is_soft_delete === null)
+            throw new Error("The parameter 'is_soft_delete' cannot be null.");
+        else if (is_soft_delete !== undefined)
+            url_ += "is_soft_delete=" + encodeURIComponent("" + is_soft_delete) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -1343,6 +1351,9 @@ export abstract class BaseAuditableEntity extends BaseEntity implements IBaseAud
     createdBy?: string | undefined;
     lastModified?: Date | undefined;
     lastModifiedBy?: string | undefined;
+    deletedBy?: string | undefined;
+    isDeleted?: boolean | undefined;
+    deletedDate?: Date;
 
     constructor(data?: IBaseAuditableEntity) {
         super(data);
@@ -1355,6 +1366,9 @@ export abstract class BaseAuditableEntity extends BaseEntity implements IBaseAud
             this.createdBy = _data["createdBy"];
             this.lastModified = _data["lastModified"] ? new Date(_data["lastModified"].toString()) : <any>undefined;
             this.lastModifiedBy = _data["lastModifiedBy"];
+            this.deletedBy = _data["deletedBy"];
+            this.isDeleted = _data["isDeleted"];
+            this.deletedDate = _data["deletedDate"] ? new Date(_data["deletedDate"].toString()) : <any>undefined;
         }
     }
 
@@ -1369,6 +1383,9 @@ export abstract class BaseAuditableEntity extends BaseEntity implements IBaseAud
         data["createdBy"] = this.createdBy;
         data["lastModified"] = this.lastModified ? this.lastModified.toISOString() : <any>undefined;
         data["lastModifiedBy"] = this.lastModifiedBy;
+        data["deletedBy"] = this.deletedBy;
+        data["isDeleted"] = this.isDeleted;
+        data["deletedDate"] = this.deletedDate ? this.deletedDate.toISOString() : <any>undefined;
         super.toJSON(data);
         return data;
     }
@@ -1379,6 +1396,9 @@ export interface IBaseAuditableEntity extends IBaseEntity {
     createdBy?: string | undefined;
     lastModified?: Date | undefined;
     lastModifiedBy?: string | undefined;
+    deletedBy?: string | undefined;
+    isDeleted?: boolean | undefined;
+    deletedDate?: Date;
 }
 
 export class TodoItem extends BaseAuditableEntity implements ITodoItem {
@@ -1519,7 +1539,6 @@ export class TodoItemTag extends BaseAuditableEntity implements ITodoItemTag {
     itemId?: number;
     title?: string | undefined;
     colour?: Colour;
-    isDeleted?: boolean;
     item?: TodoItem;
 
     constructor(data?: ITodoItemTag) {
@@ -1532,7 +1551,6 @@ export class TodoItemTag extends BaseAuditableEntity implements ITodoItemTag {
             this.itemId = _data["itemId"];
             this.title = _data["title"];
             this.colour = _data["colour"] ? Colour.fromJS(_data["colour"]) : <any>undefined;
-            this.isDeleted = _data["isDeleted"];
             this.item = _data["item"] ? TodoItem.fromJS(_data["item"]) : <any>undefined;
         }
     }
@@ -1549,7 +1567,6 @@ export class TodoItemTag extends BaseAuditableEntity implements ITodoItemTag {
         data["itemId"] = this.itemId;
         data["title"] = this.title;
         data["colour"] = this.colour ? this.colour.toJSON() : <any>undefined;
-        data["isDeleted"] = this.isDeleted;
         data["item"] = this.item ? this.item.toJSON() : <any>undefined;
         super.toJSON(data);
         return data;
@@ -1560,7 +1577,6 @@ export interface ITodoItemTag extends IBaseAuditableEntity {
     itemId?: number;
     title?: string | undefined;
     colour?: Colour;
-    isDeleted?: boolean;
     item?: TodoItem;
 }
 

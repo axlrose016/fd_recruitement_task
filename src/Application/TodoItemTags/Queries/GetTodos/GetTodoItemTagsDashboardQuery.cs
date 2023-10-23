@@ -26,6 +26,7 @@ public class GetTodoItemTagsDashboardQueryHandler : IRequestHandler<GetTodoItemT
     public async Task<IEnumerable<TodoItemTagDashboardDto>> Handle(GetTodoItemTagsDashboardQuery request, CancellationToken cancellationToken)
     {
         var x = await _context.TodoItemsTag
+            .Where(w => w.IsDeleted != true)
             .GroupBy(g => g.Title)
             .Select(s => new TodoItemTagDashboardDto
             {
