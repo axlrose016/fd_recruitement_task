@@ -11,6 +11,8 @@ public class TodoItem : BaseAuditableEntity
     public PriorityLevel Priority { get; set; }
 
     public DateTime? Reminder { get; set; }
+    public Colour Colour { get; set; } = Colour.White;
+    public IList<TodoItemTag> Tags { get; private set; } = new List<TodoItemTag>();
 
     private bool _done;
     public bool Done
@@ -20,12 +22,11 @@ public class TodoItem : BaseAuditableEntity
         {
             if (value == true && _done == false)
             {
-                AddDomainEvent(new TodoItemCompletedEvent(this));
+                AddDomainEvent(new  TodoItemCompletedEvent(this));
             }
 
             _done = value;
         }
     }
-
     public TodoList List { get; set; } = null!;
 }

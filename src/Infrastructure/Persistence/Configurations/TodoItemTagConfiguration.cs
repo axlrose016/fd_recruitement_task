@@ -4,16 +4,13 @@ using Todo_App.Domain.Entities;
 
 namespace Todo_App.Infrastructure.Persistence.Configurations;
 
-public class TodoItemConfiguration : IEntityTypeConfiguration<TodoItem>
+public class TodoItemTagConfiguration : IEntityTypeConfiguration<TodoItemTag>
 {
-    public void Configure(EntityTypeBuilder<TodoItem> builder)
+    public void Configure(EntityTypeBuilder<TodoItemTag> builder)
     {
         builder.Property(t => t.Title)
             .HasMaxLength(200)
             .IsRequired();
-
-        builder.Property(t => t.Note)
-            .HasMaxLength(2);
 
         builder
             .OwnsOne(b => b.Colour);

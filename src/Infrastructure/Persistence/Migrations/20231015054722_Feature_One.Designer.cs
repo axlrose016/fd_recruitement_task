@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Todo_App.Infrastructure.Persistence;
 
@@ -11,9 +12,10 @@ using Todo_App.Infrastructure.Persistence;
 namespace Todo_App.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231015054722_Feature_One")]
+    partial class Feature_One
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -348,44 +350,6 @@ namespace Todo_App.Infrastructure.Persistence.Migrations
                     b.ToTable("TodoItems");
                 });
 
-            modelBuilder.Entity("Todo_App.Domain.Entities.TodoItemTag", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("ItemId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ItemId");
-
-                    b.ToTable("TodoItemsTag");
-                });
-
             modelBuilder.Entity("Todo_App.Domain.Entities.TodoList", b =>
                 {
                     b.Property<int>("Id")
@@ -563,37 +527,6 @@ namespace Todo_App.Infrastructure.Persistence.Migrations
                     b.Navigation("List");
                 });
 
-            modelBuilder.Entity("Todo_App.Domain.Entities.TodoItemTag", b =>
-                {
-                    b.HasOne("Todo_App.Domain.Entities.TodoItem", "Item")
-                        .WithMany("Items")
-                        .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.OwnsOne("Todo_App.Domain.ValueObjects.Colour", "Colour", b1 =>
-                        {
-                            b1.Property<int>("TodoItemTagId")
-                                .HasColumnType("int");
-
-                            b1.Property<string>("Code")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.HasKey("TodoItemTagId");
-
-                            b1.ToTable("TodoItemsTag");
-
-                            b1.WithOwner()
-                                .HasForeignKey("TodoItemTagId");
-                        });
-
-                    b.Navigation("Colour")
-                        .IsRequired();
-
-                    b.Navigation("Item");
-                });
-
             modelBuilder.Entity("Todo_App.Domain.Entities.TodoList", b =>
                 {
                     b.OwnsOne("Todo_App.Domain.ValueObjects.Colour", "Colour", b1 =>
@@ -615,11 +548,6 @@ namespace Todo_App.Infrastructure.Persistence.Migrations
 
                     b.Navigation("Colour")
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Todo_App.Domain.Entities.TodoItem", b =>
-                {
-                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("Todo_App.Domain.Entities.TodoList", b =>
