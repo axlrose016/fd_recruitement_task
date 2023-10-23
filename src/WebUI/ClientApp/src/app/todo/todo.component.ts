@@ -32,7 +32,8 @@ export class TodoComponent implements OnInit {
     id: [null],
     listId: [null],
     priority: [''],
-    note: ['']
+    note: [''],
+    colour:[null]
   });
 
 
@@ -101,7 +102,8 @@ export class TodoComponent implements OnInit {
   showListOptionsModal(template: TemplateRef<any>) {
     this.listOptionsEditor = {
       id: this.selectedList.id,
-      title: this.selectedList.title
+      title: this.selectedList.title,
+      colour: this.selectedList.colour
     };
 
     this.listOptionsModalRef = this.modalService.show(template);
@@ -113,6 +115,7 @@ export class TodoComponent implements OnInit {
       () => {
         (this.selectedList.title = this.listOptionsEditor.title),
           this.listOptionsModalRef.hide();
+        this.selectedList.colour = this.listOptionsEditor.colour;
         this.listOptionsEditor = {};
       },
       error => console.error(error)
@@ -162,6 +165,7 @@ export class TodoComponent implements OnInit {
         }
 
         this.selectedItem.priority = item.priority;
+        this.selectedItem.colour = item.colour;
         this.selectedItem.note = item.note;
         this.itemDetailsModalRef.hide();
         this.itemDetailsFormGroup.reset();
